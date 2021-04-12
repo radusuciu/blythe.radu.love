@@ -1,13 +1,15 @@
 {{ define "main" }}
 
 	{{ partial "banner" site.Data.banner }}
-	<!-- {{ partial "spotlight" site.Data.spotlight1 }}
-	{{ partial "spotlight" site.Data.spotlight2 }}
-	{{ partial "spotlight" site.Data.spotlight3 }}
-	{{ partial "gallery" site.Data.gallery }}
-	{{ partial "items" site.Data.items }}
+	{{ partial "spotlight" site.Data.venue }}
+	{{ partial "spotlight" site.Data.timeline }}
 	{{ partial "elements" . }}
-	{{ partial "elements_reference" . }} -->
+	{{ partial "gallery" site.Data.gallery }}
+	<!--
+		{{ partial "spotlight" site.Data.spotlight3 }}
+		{{ partial "items" site.Data.items }}
+		{{ partial "elements_reference" . }} 
+	-->
 	{{ partial "template/footer" . }}
 
 {{ end }}
