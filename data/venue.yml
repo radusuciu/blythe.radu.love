@@ -1,0 +1,9 @@
+####################### Spotlight #########################
+style: "style1 orient-right content-align-left image-position-center onscroll-image-fade-in"
+title : "Venue"
+content: |
+  Both the ceremony and reception will be taking place the <a href="https://www.sdnhm.org/">San Diego Natural History Museum</a>, also known as "The Nat". The cocktail hour will take place on level 2 where you'll be free to roam and look at the exhibits. If you'd like to see more of the museum, or if you arrive early to the ceremony, you'll be able to enter free of charge - just say that you're there for the Dillingham-Suciu wedding.
+button: 
+  label: "Learn More about the Museum"
+  link: "https://www.sdnhm.org/"
+image: "images/museum_day.jpg"
