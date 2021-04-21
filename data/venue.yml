@@ -1,0 +1,9 @@
+####################### Spotlight #########################
+style: "style1 orient-right content-align-left image-position-center onscroll-image-fade-in"
+title : "Venue"
+content: |
+  Both the ceremony and reception will be taking place at the <a href="https://www.sdnhm.org/">San Diego Natural History Museum</a>, located in Balboa Park. The cocktail hour will take place on level 2 where you'll be free to roam throughout the exhibits. If you'd like to see more of the museum, you are welcome to arrive early and explore before the ceremony. You’ll be able to enter free of charge - just say that you're there for the wedding. We hope you enjoy experiencing the unique natural history of the beautiful Southern California-Baja California region!
+  <p>
+  <strong>Address: </strong><a href="https://goo.gl/maps/nRAGdzN8qvveJAkv7">1788 El Prado, Balboa Park, San Diego, CA 92101</a>
+  </p>
+image: "images/museum_day.jpg"

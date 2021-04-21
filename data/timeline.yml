@@ -1,0 +1,37 @@
+####################### Spotlight #########################
+style: "style1 orient-left content-align-left image-position-center onscroll-image-fade-in"
+id: "first"
+title : "Timeline"
+content: |
+  <ul class="alt">
+    <li>
+      <header>
+        <h3>Ceremony <span style="float:right">4:30 - 5:30 PM</span></h3>
+        <p>Rooftop Terrace</p>
+      </header>
+      <p>With a spectacular view of Balboa Park, the downtown skyline, east to the mountains, and south into Mexico and the San Diego Bay, this rooftop deck is a stunning location—and the only one in the Park. The outdoor space is 2,600 square feet and offers an unbeatable setting for wedding ceremonies, cocktail mixers, and other social gatherings.</p>
+    </li>
+    <li>
+      <header>
+        <h3>Cocktail Hour<span style="float:right">5:30 - 6:30 PM</span></h3>
+        <p>Museum Level 2 Exhibits</p>
+      </header>
+      <p>Overlooking the Atrium and featuring three unique exhibitions, this space is the perfect location for cocktail parties, mixers and networking events, and other social gatherings. When visitors enter the historic south entrance of the Museum, they are greeted by the mesmerizing sight of the iconic Foucault Pendulum.</p>
+    </li>
+    <li>
+      <header>
+        <h3>Dinner & Reception <span style="float:right">6:30 - 11:00 PM</span></h3>
+        <p>Atrium</p>
+      </header>
+      <p>Atrium is a stunning and versatile space with a 60-foot, four-story translucent ceiling and a granite floor. At 5,000 square feet, the Atrium can accommodate up to 300 guests for a seated dinner and up to 500 for a reception. If the additional second-story mezzanine space is used, dinner seating can increase to 340 and reception to 700. Perfect for corporate dinners, galas, wedding receptions, dances, and more.</p>
+    </li>
+    <li>
+      <header>
+        <h3>After-party <span style="float:right">11:00 PM - 1:00 AM</span></h3>
+        <p>Atrium</p>
+      </header>
+      <p>🎈</p>
+    </li>
+  </ul>
+
+image: "images/pexels-giallo-859895.jpg"
