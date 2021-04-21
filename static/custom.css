@@ -8,3 +8,12 @@
 .gallery.style1 article img.center-top {
     object-position: center top;
 }
+
+.wrapper.style1 > .inner {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+}
+
+.index > section:first-child {
+    padding-top:1rem;
+}

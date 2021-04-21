@@ -1,0 +1,33 @@
+####################### Spotlight #########################
+style: "style1 orient-left content-align-left image-position-center onscroll-image-fade-in"
+id: "first"
+title : "Timeline"
+content: |
+  <ul class="alt" style="text-align:left">
+    <li>
+      <header>
+        <h3>Ceremony <span style="float:right">4:30 - 5:30 PM</span></h3>
+        <p>Rooftop Terrace</p>
+      </header>
+    </li>
+    <li>
+      <header>
+        <h3>Cocktail Hour<span style="float:right">5:30 - 6:30 PM</span></h3>
+        <p>Museum Level 2 Exhibits</p>
+      </header>
+    </li>
+    <li>
+      <header>
+        <h3>Dinner & Reception <span style="float:right">6:30 - 11:00 PM</span></h3>
+        <p>Atrium</p>
+      </header>
+    </li>
+    <li>
+      <header>
+        <h3>Late Night Treats and After Party<span style="float:right">11:00 PM - 1:00 AM</span></h3>
+        <p>Atrium</p>
+      </header>
+    </li>
+  </ul>
+
+image: "images/pexels-giallo-859895.jpg"
