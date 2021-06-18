@@ -17,3 +17,23 @@
 .index > section:first-child {
     padding-top:1rem;
 }
+
+.no-bottom-margin {
+    margin-bottom: 0;
+}
+
+.gallery-caption {
+    margin-bottom: 1rem;
+    font-size: smaller;
+    font-style: italic;
+}
+
+.hotel-images {
+    margin-top: 1rem;
+    overflow: hidden;
+    max-height: 304px;
+}
+
+.hotel-images article {
+    padding: 2px;
+}
