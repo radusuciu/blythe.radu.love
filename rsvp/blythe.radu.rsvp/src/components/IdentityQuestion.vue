@@ -15,7 +15,7 @@ defineEmits(['yes', 'no'])
 <template>
     <span>
         <span class="mr-4" style="vertical-align: middle">
-            <span class="is-underlined">Is this you,</span> <strong class="has-text-info">{{ name }}</strong>?
+            <span class="is-italic">Is this you:</span> <strong class="has-text-info">{{ name }}</strong>?
         </span>
         <span class="buttons is-inline">
             <button @click="$emit('yes')" class="button is-outlined is-success">Yes</button>

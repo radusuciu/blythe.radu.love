@@ -32,13 +32,13 @@ function no() {
 </script>
 
 <template>
-    <span>
-        <span class="mr-4" style="vertical-align: middle">
+    <div>
+        <span class="is-italic mr-4" style="vertical-align: middle">
             {{ question }}
         </span>
         <span class="buttons is-inline">
             <button @click="yes" :class="answeredYes ? 'is-active': 'is-outlined'" class="button is-success">Yes</button>
             <button @click="no" :class="answeredNo ? 'is-active': 'is-outlined'" class="button is-danger">No</button>
         </span>
-    </span>
+    </div>
 </template>

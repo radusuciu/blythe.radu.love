@@ -49,6 +49,7 @@ const answeredQuestion = ref(false)
             <transition name="fade" mode="out-in">
                 <Question
                     v-if="!answeredQuestion || !showTextbox"
+                    class="has-text-centered"
                     question="Do you or anyone in your party have any dietary restrictions?"
                     @yes="showTextbox = true; answeredQuestion = true"
                     @no="answeredQuestion = true"
