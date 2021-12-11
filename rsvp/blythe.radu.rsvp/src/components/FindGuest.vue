@@ -6,7 +6,7 @@ import invitees from '../data/invitees.json'
 
 defineEmits(['rightGuest', 'wrongGuest'])
 
-const searchInput = ref(null)
+const searchInput = ref<null | { focus: () => null }>(null)
 const searchTerm = ref('')
 
 function searchForGuest(name: string) {
@@ -25,7 +25,7 @@ const foundGuest = computed(() => {
 })
 
 onMounted(() => {
-    searchInput.value.focus()
+    searchInput.value?.focus()
 })
 
 </script>

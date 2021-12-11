@@ -7,6 +7,14 @@ defineProps({
     question: {
         type: String,
         required: true,
+    },
+    questionClass: {
+        type: String,
+        required: false,
+    },
+    answerButtonsClass: {
+        type: String,
+        required: false,
     }
 })
 
@@ -16,15 +24,17 @@ const answered = ref(false)
 const answeredYes = ref(false)
 const answeredNo = ref(false)
 
-function yes() {
+function yes(event) {
     answered.value = true
     answeredYes.value = true
-    emit('yes')
+    answeredNo.value = false
+    emit('yes', event)
 }
 
 function no() {
     answered.value = true
     answeredNo.value = true
+    answeredYes.value = false
     emit('no')
 }
 
@@ -33,11 +43,11 @@ function no() {
 
 <template>
     <div>
-        <span class="is-italic mr-4" style="vertical-align: middle">
+        <span class="mr-4" :class="questionClass" style="vertical-align: middle">
             {{ question }}
         </span>
-        <span class="buttons is-inline">
-            <button @click="yes" :class="answeredYes ? 'is-active': 'is-outlined'" class="button is-success">Yes</button>
+        <span class="buttons is-inline" :class="answerButtonsClass">
+            <button @click="yes($event)" :class="answeredYes ? 'is-active': 'is-outlined'" class="button is-success">Yes</button>
             <button @click="no" :class="answeredNo ? 'is-active': 'is-outlined'" class="button is-danger">No</button>
         </span>
     </div>

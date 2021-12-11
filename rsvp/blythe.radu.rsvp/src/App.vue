@@ -1,13 +1,26 @@
 <script setup lang="ts">
 
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import './../node_modules/bulma/css/bulma.css'
 
 import FindGuest from './components/FindGuest.vue'
 import PartyResponse from './components/PartyResponse.vue'
+import PlusOneResponse from './components/PlusOneResponse.vue'
+import SingleResponse from './components/SingleResponse.vue'
+
 
 const guest = ref({})
 const responded = ref(false)
+
+const responseComponent = computed(() => {
+    if (guest.value.hasPlusOne) {
+        return PlusOneResponse
+    } else if (guest.value.hasOwnProperty('party')) {
+        return PartyResponse
+    }
+
+    return SingleResponse
+})
 
 
 function onFoundGuest(foundGuest) {
@@ -29,11 +42,12 @@ function onWrongGuest(guest) {
                 @rightGuest="onFoundGuest"
                 @wrongGuest="onWrongGuest"
             />
-            <PartyResponse
+
+            <component :is="responseComponent"
                 v-else
                 :guest="guest"
                 @wrongGuest="responded = false"
-            />
+            ></component>
         </transition>
     </div>
 </template>

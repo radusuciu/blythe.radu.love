@@ -1,6 +1,8 @@
 <script setup lang="ts">
 
+import { confetti } from 'party-js'
 import { ref } from 'vue'
+import AttendanceQuestion from './AttendanceQuestion.vue'
 import AttendanceQuestionRow from './AttendanceQuestionRow.vue'
 import Question from './Question.vue'
 import invitees from '../data/invitees.json'
@@ -14,18 +16,13 @@ const props = defineProps({
 
 defineEmits(['wrongGuest'])
 
-// TODO: sort guest before rest of party
-const party = invitees.filter(i => i.party === props.guest.party)
+const guestCanMakeIt = ref(false)
+const guestAnswered = ref(false)
 const showTextbox = ref(false)
 const answeredQuestion = ref(false)
-const responseSelected = ref(false)
 
-function guestIsComing(guest) {
-
-}
-
-function guestIsNotComing(guest) {
-
+function yass(event) {
+    confetti(event.target)
 }
 
 
@@ -37,31 +34,25 @@ function guestIsNotComing(guest) {
             Hi <strong class="has-text-info">{{ guest.name }}</strong>! <span @click="$emit('wrongGuest')" style="vertical-align:top" class="is-size-6 has-text-grey-light is-clickable">(not you?)</span>
         </h1>
         <p class="subtitle">
-            Would you please tell us if you're able to make it? You may also answer for others in your party. If you encounter any issues or have questions, please email us at <a href="mailto:rsvp@blythe.radu.love">rsvp@blythe.radu.love</a>.
+            Would you please tell us if you're able to make it? If you encounter any issues or have questions, please email us at <a href="mailto:rsvp@blythe.radu.love">rsvp@blythe.radu.love</a>.
         </p>
 
         <div class="box">
-            <table class="table container">
-                <thead>
-                    <tr>
-                        <th>Guest Name</th>
-                        <th colspan="2" class="has-text-centered">Are they coming?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <AttendanceQuestionRow 
-                        v-for="guest in party"
-                        :name="guest.name"
-                        @yes="guestIsComing(guest); responseSelected = true"
-                        @no="guestIsNotComing(guest); responseSelected = true"
-                    />
-                </tbody>
-            </table>
-            <transition name="fade" mode="out-in">
+            <Question
+                class="columns"
+                question="Are you able to make it?"
+                question-class="column"
+                answer-buttons-class="column"
+                @yes="yass($event); guestAnswered = true; guestCanMakeIt = true"
+                @no="guestAnswered = true; guestCanMakeIt = false"
+            />
+            <transition name="fade" mode="out-in" v-if="guestAnswered && guestCanMakeIt">
                 <Question
                     v-if="!answeredQuestion || !showTextbox"
-                    class="has-text-centered is-italic"
-                    question="Do you or anyone in your party have any dietary restrictions?"
+                    class="columns"
+                    question="Do you have any dietary restrictions?"
+                    question-class="column"
+                    answer-buttons-class="column"
                     @yes="showTextbox = true; answeredQuestion = true"
                     @no="answeredQuestion = true"
                 />
@@ -73,7 +64,7 @@ function guestIsNotComing(guest) {
             </transition>
         </div>
 
-        <button :disabled="!responseSelected" class="is-large is-primary button is-pulled-right">Submit My Response</button>
+        <button :disabled="false" class="is-large is-primary button is-pulled-right">Submit My Response</button>
     </div>
 </template>
 
