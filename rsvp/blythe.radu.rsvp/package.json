@@ -2,14 +2,20 @@
   "name": "blythe.radu.rsvp",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "netlify dev",
     "build": "vue-tsc --noEmit && vite build",
+    "debug": "netlify dev --inspect",
     "serve": "vite preview"
   },
   "dependencies": {
+    "@netlify/functions": "^0.10.0",
+    "@vueuse/core": "^7.3.0",
     "bulma": "^0.9.3",
     "bulmaswatch": "^0.8.1",
+    "google-spreadsheet": "^3.2.0",
+    "mande": "^1.0.0",
     "party-js": "^2.1.2",
+    "pinia": "^2.0.6",
     "vue": "^3.2.16",
     "vue-router": "^4.0.12"
   },

@@ -24,7 +24,7 @@ const answered = ref(false)
 const answeredYes = ref(false)
 const answeredNo = ref(false)
 
-function yes(event) {
+function yes(event: MouseEvent) {
     answered.value = true
     answeredYes.value = true
     answeredNo.value = false

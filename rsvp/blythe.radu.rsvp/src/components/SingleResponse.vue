@@ -5,7 +5,6 @@ import { ref } from 'vue'
 import AttendanceQuestion from './AttendanceQuestion.vue'
 import AttendanceQuestionRow from './AttendanceQuestionRow.vue'
 import Question from './Question.vue'
-import invitees from '../data/invitees.json'
 
 const props = defineProps({
     guest: {
@@ -21,8 +20,8 @@ const guestAnswered = ref(false)
 const showTextbox = ref(false)
 const answeredQuestion = ref(false)
 
-function yass(event) {
-    confetti(event.target)
+function yass(event: MouseEvent) {
+    confetti(event.target as HTMLElement)
 }
 
 

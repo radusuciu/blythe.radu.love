@@ -19,12 +19,13 @@ const nameSlug = computed(() => {
     return props.name.toLowerCase().replace(' ', '-')
 })
 
-function onYes(event) {
-    party.confetti(event.target)
+function onYes(event: MouseEvent) {
+    console.log('yes')
+    party.confetti(event.target as HTMLElement)
     emit('yes')
 }
 
-function onNo(event) {
+function onNo(event: MouseEvent) {
     emit('no')
 }
 

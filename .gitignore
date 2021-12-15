@@ -1,3 +1,6 @@
 *Zone.Identifier
 resources
 public
+static/images/**/*.jpg
+static/images/**/*.JPG
+static/images/**/*.jpeg

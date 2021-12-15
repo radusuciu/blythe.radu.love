@@ -1,32 +1,32 @@
 <script setup lang="ts">
 
-import { ref, computed, onMounted } from 'vue'
-import IdentityQuestion from './IdentityQuestion.vue'
-import invitees from '../data/invitees.json'
+import { ref, onMounted } from 'vue'
+import { useCachedRequest } from '../composables/useCachedRequest'
+import { findGuest, Guest } from '../api/guest'
+import IdentityQuestion from '@/components/IdentityQuestion.vue'
+import { useDebounce } from '@vueuse/core'
+
 
 defineEmits(['rightGuest', 'wrongGuest'])
 
 const searchInput = ref<null | { focus: () => null }>(null)
 const searchTerm = ref('')
+const debouncedTerm = useDebounce(searchTerm, 200)
 
-function searchForGuest(name: string) {
-    const matches = invitees.filter(i => i.name.toLowerCase().includes(name.toLowerCase()))
-
-    // TODO: check if all of the matches have identical names
-    // and if they do, we should handle that.. we need a disambiguation
-    // field in the data to support this
-    if (matches.length === 1) {
-        return matches[0]
-    }
-}
-
-const foundGuest = computed(() => {
-    return searchForGuest(searchTerm.value)
-})
+const {
+    data,
+    error,
+    isLoading,
+    isReady,
+} = useCachedRequest(debouncedTerm, findGuest)
 
 onMounted(() => {
     searchInput.value?.focus()
 })
+
+// TODO: if we had a unique match and the user keeps typing maybe stop making requests
+// or maybe just keep that last good match up if further input makes us unable to find
+// a good match
 
 </script>
 
@@ -36,24 +36,31 @@ onMounted(() => {
         <p class="subtitle">
             Thank you for responding!
         </p>
-
         <div class="block">
             <p class="">
                 First, let's find your invite, could we please have your name?
             </p>
-            <input ref="searchInput" autofocus type="text"
-                class="input is-primary is-medium"
-                placeholder="Just start typing!"
-                v-model="searchTerm"
-            >
+            <div class="control is-medium" :class="{ 'is-loading': isLoading }">
+                <input ref="searchInput" autofocus type="text"
+                    class="input is-primary is-medium"
+                    placeholder="Just start typing!"
+                    v-model="searchTerm"
+                >
+            </div>
+            <transition name="fade">
+                <p v-show="isLoading" class="is-pulled-right has-text-right is-size-6 is-italic has-text-grey">
+                    loading
+                </p>
+            </transition>
         </div>
         <div class="block">
             <div class="">
-                <transition name="fade">
+                <transition name="fade" mode="out-in">
                     <IdentityQuestion
-                        v-if="foundGuest"
-                        :name="foundGuest.name"
-                        @yes="$emit('rightGuest', foundGuest)"
+                        v-if="error === undefined && data?.uniqueMatch"
+                        :disabled="isLoading"
+                        :name="data.guest.name"
+                        @yes="$emit('rightGuest', data.guest)"
                         @no="$emit('wrongGuest')"
                     />
                 </transition>

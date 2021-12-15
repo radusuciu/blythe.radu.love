@@ -1,31 +1,45 @@
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import AttendanceQuestionRow from './AttendanceQuestionRow.vue'
 import Question from './Question.vue'
-import invitees from '../data/invitees.json'
+import { Guest, GuestResponse } from '../api/guest'
+
 
 const props = defineProps({
     guest: {
-        type: Object,
+        type: Object as () => Guest,
         required: true,
     }
 })
 
-defineEmits(['wrongGuest'])
+const emit = defineEmits(['wrongGuest', 'response'])
+
 
 // TODO: sort guest before rest of party
-const party = invitees.filter(i => i.party === props.guest.party)
 const showTextbox = ref(false)
 const answeredQuestion = ref(false)
 const responseSelected = ref(false)
+const dietaryRestrictions = ref('')
 
-function guestIsComing(guest) {
+const party = [props.guest, ...props.guest.party]
+
+const responses = {}
+
+
+function guestIsComing(guest: Guest) {
+    responses[guest.id] = {
+        
+    }
+}
+
+function guestIsNotComing(guest: Guest) {
 
 }
 
-function guestIsNotComing(guest) {
 
+function onResponse() {
+    emit('response')
 }
 
 
@@ -50,10 +64,10 @@ function guestIsNotComing(guest) {
                 </thead>
                 <tbody>
                     <AttendanceQuestionRow 
-                        v-for="guest in party"
-                        :name="guest.name"
-                        @yes="guestIsComing(guest); responseSelected = true"
-                        @no="guestIsNotComing(guest); responseSelected = true"
+                        v-for="g in party"
+                        :name="g.name"
+                        @yes="guestIsComing(g); responseSelected = true"
+                        @no="guestIsNotComing(g); responseSelected = true"
                     />
                 </tbody>
             </table>
@@ -68,12 +82,18 @@ function guestIsNotComing(guest) {
                 <div v-else-if="showTextbox" class="has-text-grey">
                     <p>Please note any dietary restrictions and we'll do our best to accomodate you.
                     </p>
-                    <textarea class="textarea is-size-5 mt-2" rows="1"></textarea>
+                    <textarea v-model="dietaryRestrictions" class="textarea is-size-5 mt-2" rows="1"></textarea>
                 </div>
             </transition>
         </div>
 
-        <button :disabled="!responseSelected" class="is-large is-primary button is-pulled-right">Submit My Response</button>
+        <button
+            :disabled="!responseSelected"
+            class="is-large is-primary button is-pulled-right"
+            @click="onResponse"
+        >
+            Submit My Response
+        </button>
     </div>
 </template>
 

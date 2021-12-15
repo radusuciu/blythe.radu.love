@@ -4,6 +4,10 @@ defineProps({
     name: {
         type: String,
         required: true,
+    },
+    disabled: {
+        type: Boolean,
+        default: false,
     }
 })
 
@@ -14,12 +18,12 @@ defineEmits(['yes', 'no'])
 
 <template>
     <span>
-        <span class="mr-4" style="vertical-align: middle">
-            <span class="is-italic">Is this you:</span> <strong class="has-text-info">{{ name }}</strong>?
+        <span class="mr-4" style="vertical-align: middle" :class="{ 'has-text-grey-light': disabled }">
+            <span class="is-italic">Is this you:</span> <span :class="{ 'has-text-info': !disabled, 'has-text-weight-bold': !disabled }">{{ name }}</span>?
         </span>
         <span class="buttons is-inline">
-            <button @click="$emit('yes')" class="button is-outlined is-success">Yes</button>
-            <button @click="$emit('no')" class="button is-outlined is-danger">No</button>
+            <button @click="$emit('yes')" class="button is-outlined is-success" :disabled="disabled">Yes</button>
+            <button @click="$emit('no')" class="button is-outlined is-danger" :disabled="disabled">No</button>
         </span>
     </span>
 </template>

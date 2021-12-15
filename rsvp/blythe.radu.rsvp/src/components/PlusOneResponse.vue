@@ -5,7 +5,6 @@ import { nextTick, ref, computed } from 'vue'
 import AttendanceQuestion from './AttendanceQuestion.vue'
 import AttendanceQuestionRow from './AttendanceQuestionRow.vue'
 import Question from './Question.vue'
-import invitees from '../data/invitees.json'
 
 const props = defineProps({
     guest: {
@@ -39,8 +38,8 @@ function onGuestHasPlusOne() {
     nextTick(() => plusOneNameInput.value?.focus())
 }
 
-function yass(event) {
-    confetti(event.target)
+function yass(event: MouseEvent) {
+    confetti(event.target as HTMLElement)
 }
 
 </script>
@@ -61,7 +60,7 @@ function yass(event) {
                 question-class="column"
                 answer-buttons-class="column"
                 @yes="yass($event); guestAnswered = true; guestCanMakeIt = true"
-                @no="guestAnswered = true; guestCanMakeIt = false"
+                @no="guestAnswered = true; guestCanMakeIt = false; guestHasPlusOne = false"
             />
             <Question
                 v-if="!guestAnswered || guestCanMakeIt"
@@ -73,7 +72,7 @@ function yass(event) {
                 @no="guestHasPlusOne = false"
             />
             <transition name="fade">
-                <div v-if="guestHasPlusOne" class="columns is-vcentered">
+                <div v-if="guestHasPlusOne && (guestAnswered && guestCanMakeIt)" class="columns is-vcentered">
                     <span class="column mr-4">What is the name of your plus one?</span>
                     <span class="column">
                         <input ref="plusOneNameInput" v-model="plusOneName" class="input" type="text">
