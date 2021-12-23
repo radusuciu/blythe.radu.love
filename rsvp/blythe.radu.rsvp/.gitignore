@@ -7,3 +7,5 @@ dist-ssr
 .netlify/data/*
 .netlify/.env
 .netlify/state.json
+.env
+invitees.json

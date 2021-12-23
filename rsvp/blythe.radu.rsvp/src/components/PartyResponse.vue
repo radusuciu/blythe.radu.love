@@ -1,60 +1,31 @@
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { computed, toRefs } from 'vue'
 import AttendanceQuestionRow from './AttendanceQuestionRow.vue'
-import Question from './Question.vue'
-import { Guest, GuestResponse } from '../api/guest'
+import DietaryRestrictions from './DietaryRestrictions.vue'
+import { useGuest } from '../composables/useGuest'
+import ResponseHeader from './ResponseHeader.vue'
+import { useResponseStore } from '../stores/response'
+import SubmitReponseButton from './SubmitResponseButton.vue'
 
+// TODO: currently party members are marked as not coming even if there is no answer
+// because of how the responses are initialized
+const { guest, responseSelected, guestIsComing, guestIsNotComing } = toRefs(useGuest())
+const responseStore = useResponseStore()
 
-const props = defineProps({
-    guest: {
-        type: Object as () => Guest,
-        required: true,
-    }
+const party = computed(() => {
+    return [guest.value, ...guest.value.party]
 })
-
-const emit = defineEmits(['wrongGuest', 'response'])
-
-
-// TODO: sort guest before rest of party
-const showTextbox = ref(false)
-const answeredQuestion = ref(false)
-const responseSelected = ref(false)
-const dietaryRestrictions = ref('')
-
-const party = [props.guest, ...props.guest.party]
-
-const responses = {}
-
-
-function guestIsComing(guest: Guest) {
-    responses[guest.id] = {
-        
-    }
-}
-
-function guestIsNotComing(guest: Guest) {
-
-}
-
-
-function onResponse() {
-    emit('response')
-}
-
-
 </script>
 
 <template>
     <div>
-        <h1 class="title">
-            Hi <strong class="has-text-info">{{ guest.name }}</strong>! <span @click="$emit('wrongGuest')" style="vertical-align:top" class="is-size-6 has-text-grey-light is-clickable">(not you?)</span>
-        </h1>
-        <p class="subtitle">
-            Would you please tell us if you're able to make it? You may also answer for others in your party. If you encounter any issues or have questions, please email us at <a href="mailto:rsvp@blythe.radu.love">rsvp@blythe.radu.love</a>.
-        </p>
+        <ResponseHeader
+            :guest-name="guest.name"
+            subtitleExtra="You may also answer for others in your party. "
+        />
 
-        <div class="box">
+        <div class="box" :class="{ 'is-loading': responseStore.isLoading }">
             <table class="table container">
                 <thead>
                     <tr>
@@ -66,48 +37,39 @@ function onResponse() {
                     <AttendanceQuestionRow 
                         v-for="g in party"
                         :name="g.name"
-                        @yes="guestIsComing(g); responseSelected = true"
-                        @no="guestIsNotComing(g); responseSelected = true"
+                        @yes="guestIsComing(g.id, $event)"
+                        @no="guestIsNotComing(g.id)"
                     />
                 </tbody>
             </table>
-            <transition name="fade" mode="out-in">
-                <Question
-                    v-if="!answeredQuestion || !showTextbox"
-                    class="has-text-centered is-italic"
-                    question="Do you or anyone in your party have any dietary restrictions?"
-                    @yes="showTextbox = true; answeredQuestion = true"
-                    @no="answeredQuestion = true"
-                />
-                <div v-else-if="showTextbox" class="has-text-grey">
-                    <p>Please note any dietary restrictions and we'll do our best to accomodate you.
-                    </p>
-                    <textarea v-model="dietaryRestrictions" class="textarea is-size-5 mt-2" rows="1"></textarea>
-                </div>
-            </transition>
+            <DietaryRestrictions
+                css-class="has-text-centered is-italic"
+            />
         </div>
 
-        <button
-            :disabled="!responseSelected"
-            class="is-large is-primary button is-pulled-right"
-            @click="onResponse"
-        >
-            Submit My Response
-        </button>
+        <SubmitReponseButton class="is-pulled-right" :disabled="!responseSelected" />
     </div>
 </template>
 
+<style lang="scss" scoped>
+@import "../node_modules/bulma/bulma.sass";
+@import "../node_modules/bulma/sass/utilities/initial-variables";
+@import "../node_modules/bulma/sass/utilities/derived-variables";
 
-<style scoped>
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.1s linear;
+div {
+    &.is-loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.5;
+        &:after {
+            @include loader;
+            position: absolute;
+            top: calc(50% - 2.5em);
+            left: calc(50% - 2.5em);
+            width: 5em;
+            height: 5em;
+            border-width: 0.25em;
+        }
+    }
 }
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
 </style>

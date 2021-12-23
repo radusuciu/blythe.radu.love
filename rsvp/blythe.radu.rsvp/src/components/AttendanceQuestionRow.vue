@@ -1,8 +1,6 @@
 <script setup lang="ts">
 
-import party from 'party-js'
 import { ref, computed } from 'vue'
-
 
 const props = defineProps({
     name: {
@@ -11,23 +9,12 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['yes', 'no'])
-
 const coming = ref(null)
 
 const nameSlug = computed(() => {
     return props.name.toLowerCase().replace(' ', '-')
 })
 
-function onYes(event: MouseEvent) {
-    console.log('yes')
-    party.confetti(event.target as HTMLElement)
-    emit('yes')
-}
-
-function onNo(event: MouseEvent) {
-    emit('no')
-}
 
 </script>
 
@@ -41,7 +28,7 @@ function onNo(event: MouseEvent) {
         <td>
             <div class="control is-size-5">
                 <label class="radio">
-                    <input @click="onYes" :name="nameSlug" type="radio" :value="true" v-model="coming">
+                    <input @click="$emit('yes', $event)" :name="nameSlug" type="radio" :value="true" v-model="coming">
                     Yes
                 </label>
             </div>
@@ -49,7 +36,7 @@ function onNo(event: MouseEvent) {
         <td>
             <div class="control is-size-5">
                 <label class="radio">
-                    <input @click="onNo" :name="nameSlug" type="radio" :value="false" v-model="coming">
+                    <input @click="$emit('no')" :name="nameSlug" type="radio" :value="false" v-model="coming">
                     No
                 </label>
             </div>

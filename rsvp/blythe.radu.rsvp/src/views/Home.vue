@@ -2,13 +2,14 @@
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
 import FindGuest from '@/components/FindGuest.vue'
-import { Guest } from '../api/guest'
-
+import { useGuestStore } from '../stores/guest'
 
 const router = useRouter()
 const responded = ref(false)
+const guestStore = useGuestStore()
+
+// guestStore.clear()
 
 function onRightGuest(foundGuest) {
     responded.value = true

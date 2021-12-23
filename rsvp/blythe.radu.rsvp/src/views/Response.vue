@@ -1,14 +1,11 @@
 <script lang="ts" setup>
 
-import { computed, ref, toRefs } from 'vue'
-import { getGuest, Guest } from '../api/guest'
-import { useCachedRequest } from '../composables/useCachedRequest'
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import PartyResponse from '@/components/PartyResponse.vue'
 import PlusOneResponse from '@/components/PlusOneResponse.vue'
 import SingleResponse from '@/components/SingleResponse.vue'
-import { useRouter } from 'vue-router'
 import { useGuestStore } from '../stores/guest'
-import { useResponseStore } from '../stores/response'
 
 
 const props = defineProps({
@@ -18,10 +15,7 @@ const props = defineProps({
     }
 })
 
-const router = useRouter()
 const guestStore = useGuestStore()
-const responseStore = useResponseStore()
-
 
 const {
     guest,
@@ -29,9 +23,8 @@ const {
     error,
     isLoading,
     isReady,
-} = toRefs(guestStore)
+} = storeToRefs(guestStore)
 
-console.log(guest, guestId, error, isLoading, isReady)
 guestId.value = props.guestId
 
 const responseComponent = computed(() => {
@@ -44,20 +37,17 @@ const responseComponent = computed(() => {
     return SingleResponse
 })
 
-function onWrongGuest() {
-    router.push({ name: 'home' })
-}
-
-function onResponse() {
-    console.log()
-}
-
 </script>
 
 <template>
-    <component v-if="guest" :is="responseComponent"
-        :guest="guest"
-        @wrongGuest="onWrongGuest"
-        @response="onResponse"
-    ></component>
+    <transition name="fade" mode="out-in">
+        <component v-if="guest" :is="responseComponent" 
+            :guest="guest"
+        ></component>
+        <div v-else class="is-flex is-flex-direction-column is-align-items-center">
+            <p class="is-size-4">Fetching your information</p>
+            <span class="loader is-size-3"></span>
+        </div>
+    </transition>
 </template>
+

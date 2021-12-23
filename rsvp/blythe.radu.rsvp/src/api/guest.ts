@@ -12,7 +12,7 @@ export interface Guest {
 
 export interface GuestResponse {
     id: string
-    isComing: boolean
+    isComing: boolean | undefined
     isBringingPlusOne?: boolean
     plusOneName?: string
     responseBy?: string
@@ -39,7 +39,8 @@ export function findGuest(query: string) {
 
 export function recordResponse(guestResponses: GuestResponse[]) {
     if (guestResponses) {
-        return api.post('recordResponse', { body: guestResponses })
+        console.log(guestResponses)
+        return api.post('recordResponse', guestResponses)
     }
 
     return Promise.resolve()

@@ -1,9 +1,7 @@
 import { Handler } from '@netlify/functions'
 import { Guest } from '../../src/api/guest'
 import { response, errorResponse } from '../utils/response'
-
-import invitees = require('../../src/data/invitees.json')
-
+import invitees = require('../data/invitees.json')
 
 const handler: Handler = async (event, context) => {
     const guestId: string = event.queryStringParameters?.guestId

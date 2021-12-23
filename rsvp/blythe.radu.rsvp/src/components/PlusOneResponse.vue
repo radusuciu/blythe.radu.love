@@ -1,57 +1,56 @@
 <script setup lang="ts">
 
-import { confetti } from 'party-js'
-import { nextTick, ref, computed } from 'vue'
-import AttendanceQuestion from './AttendanceQuestion.vue'
-import AttendanceQuestionRow from './AttendanceQuestionRow.vue'
+import { nextTick, ref, computed, toRefs } from 'vue'
 import Question from './Question.vue'
+import DietaryRestrictions from './DietaryRestrictions.vue'
+import ResponseHeader from './ResponseHeader.vue'
+import SubmitReponseButton from './SubmitResponseButton.vue'
+import { useGuest } from '../composables/useGuest'
+import { useResponseStore } from '../stores/response'
+import { useYass } from '../composables/useYass'
 
-const props = defineProps({
-    guest: {
-        type: Object,
-        required: true,
-    }
-})
+// TODO: make guest plus one name required
+const { guest, responseSelected, guestIsComing, guestIsNotComing } = toRefs(useGuest())
+const responseStore = useResponseStore()
 
-defineEmits(['wrongGuest'])
-
-const guestCanMakeIt = ref(false)
-const guestAnswered = ref(false)
-const showTextbox = ref(false)
-const answeredQuestion = ref(false)
 const guestHasPlusOne = ref(false)
 const plusOneNameInput = ref<null | { focus: () => null }>(null)
 const plusOneName = ref('')
+
+const yass = useYass()
 
 const dietaryRestrictionsText = computed(() => {
     if (guestHasPlusOne.value) {
         return 'Do you or your plus one have any dietary restrictions?'
     }
-
-    return 'Do you have any dietary restrictions?'
 })
 
-
-function onGuestHasPlusOne() {
+function onGuestHasPlusOne(event: MouseEvent) {
     guestHasPlusOne.value = true
-    console.log(plusOneNameInput.value)
+    responseStore.responses[0].isBringingPlusOne = true
     nextTick(() => plusOneNameInput.value?.focus())
+    yass(event)
 }
 
-function yass(event: MouseEvent) {
-    confetti(event.target as HTMLElement)
+function onGuestDoesNotHavePlusOne() {
+    guestHasPlusOne.value = false
+    responseStore.responses[0].isBringingPlusOne = false
 }
 
+function updatePlusOneName() {
+    const response = responseStore.responses[0]
+
+    if (guestHasPlusOne.value) {
+        response.plusOneName = plusOneName.value
+    } else {
+        response.plusOneName = ''
+    }
+}
 </script>
 
 <template>
     <div>
-        <h1 class="title">
-            Hi <strong class="has-text-info">{{ guest.name }}</strong>! <span @click="$emit('wrongGuest')" style="vertical-align:top" class="is-size-6 has-text-grey-light is-clickable">(not you?)</span>
-        </h1>
-        <p class="subtitle">
-            Would you please tell us if you're able to make it? If you encounter any issues or have questions, please email us at <a href="mailto:rsvp@blythe.radu.love">rsvp@blythe.radu.love</a>.
-        </p>
+        <ResponseHeader :guest-name="guest.name" />
 
         <div class="box">
             <Question
@@ -59,46 +58,40 @@ function yass(event: MouseEvent) {
                 question="Are you able to make it?"
                 question-class="column"
                 answer-buttons-class="column"
-                @yes="yass($event); guestAnswered = true; guestCanMakeIt = true"
-                @no="guestAnswered = true; guestCanMakeIt = false; guestHasPlusOne = false"
+                @yes="guestIsComing(guest.id, $event)"
+                @no="guestIsNotComing(guest.id); guestHasPlusOne = false"
             />
             <Question
-                v-if="!guestAnswered || guestCanMakeIt"
+                v-if="!responseSelected || responseStore.isMainGuestComing"
                 class="columns"
                 question="Will you be bringing a plus one?"
                 question-class="column"
                 answer-buttons-class="column"
-                @yes="onGuestHasPlusOne"
-                @no="guestHasPlusOne = false"
+                @yes="onGuestHasPlusOne($event)"
+                @no="onGuestDoesNotHavePlusOne"
             />
             <transition name="fade">
-                <div v-if="guestHasPlusOne && (guestAnswered && guestCanMakeIt)" class="columns is-vcentered">
+                <div v-if="guestHasPlusOne && (responseSelected && responseStore.isMainGuestComing)" class="columns is-vcentered">
                     <span class="column mr-4">What is the name of your plus one?</span>
                     <span class="column">
-                        <input ref="plusOneNameInput" v-model="plusOneName" class="input" type="text">
+                        <input ref="plusOneNameInput" v-model="plusOneName" class="input" type="text" required>
                     </span>
                 </div>
             </transition>
-            <template v-if="guestAnswered && guestCanMakeIt">
+            <template v-if="responseSelected && responseStore.isMainGuestComing">
                 <hr>
-                <transition name="fade" mode="out-in">
-                    <Question
-                        v-if="!answeredQuestion || !showTextbox"
-                        class="has-text-centered is-italic"
-                        :question="dietaryRestrictionsText"
-                        @yes="showTextbox = true; answeredQuestion = true"
-                        @no="answeredQuestion = true"
-                    />
-                    <div v-else-if="showTextbox" class="has-text-grey">
-                        <p>Please note any dietary restrictions and we'll do our best to accomodate you.
-                        </p>
-                        <textarea class="textarea is-size-5 mt-2" rows="1"></textarea>
-                    </div>
-                </transition>
+                <DietaryRestrictions
+                    :prompt-text="dietaryRestrictionsText"
+                    css-class="has-text-centered is-italic"
+                />
             </template>
         </div>
 
-        <button :disabled="false" class="is-large is-primary button is-pulled-right">Submit My Response</button>
+        <SubmitReponseButton
+            class="is-pulled-right"
+            :onBeforeSend="updatePlusOneName"
+            :disabled="!responseSelected"
+        />
     </div>
 </template>
 

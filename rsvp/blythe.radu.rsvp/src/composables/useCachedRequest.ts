@@ -17,14 +17,19 @@ export function useCachedRequest<T, U>(
         cache.clear()
     })
 
-    // TODO: use watch instead to avoid immediate execution
+    // TODO: maybe use watch instead to avoid immediate execution?
     watchEffect(async () => {
-        console.log('usecachedrequest')
         const key = unref(keySource)
+
+        if (!key) {
+            return Promise.resolve()
+        }
+
         isReady.value = false
         isLoading.value = true
 
         if (cache.has(key)) {
+            console.log('cache has key')
             data.value = cache.get(key)!
             isReady.value = true
         }
