@@ -12,10 +12,6 @@ const handler: Handler = async (event, context) => {
 
     const guest: Guest = invitees.find(i => i.id === guestId)
 
-    if (guest?.partyName) {
-        guest.party = invitees.filter(i => i.id !== guestId && i?.partyName === guest.partyName)
-    }
-
     if (!guest) {
         return errorResponse('Guest not found', 404)
     }

@@ -19,7 +19,7 @@ defineEmits(['yes', 'no'])
 <template>
     <span>
         <span class="mr-4" style="vertical-align: middle" :class="{ 'has-text-grey-light': disabled }">
-            <span class="is-italic">Is this you:</span> <span :class="{ 'has-text-info': !disabled, 'has-text-weight-bold': !disabled }">{{ name }}</span>?
+            <span>Is this you:</span> <span class="has-text-weight-bold" :class="{ 'has-text-info': !disabled }">{{ name }}</span>?
         </span>
         <span class="buttons is-inline">
             <button @click="$emit('yes')" class="button is-outlined is-success" :disabled="disabled">Yes</button>

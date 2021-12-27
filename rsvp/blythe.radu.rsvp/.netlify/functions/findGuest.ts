@@ -2,8 +2,8 @@ import { Handler } from '@netlify/functions'
 import { Guest } from '../../src/api/guest'
 import { response, errorResponse } from '../utils/response'
 import invitees from '../data/invitees.json'
+import { normalize } from '../utils/normalize.mjs'
 import * as fuzzball from 'fuzzball'
-import { match } from 'assert'
 
 
 // TODO: check if all of the matches have identical names
@@ -12,52 +12,38 @@ import { match } from 'assert'
 
 // TODO: do something when user says they are not the person
 
-const GOOD_SCORE_THRESHOLD = 80
+const GOOD_SCORE_THRESHOLD = 85
 const PERFECT_SCORE = 100
-const NAME_MATCH_SCORE_THRESHOLD = 70
+const NAME_MATCH_SCORE_THRESHOLD = 65
 const FUZZY_SCORER = fuzzball.partial_token_similarity_sort_ratio
 
 
-function normalize(text: string) {
-    // TODO: try and use findGuest.find_process for this?
-    // TODO: maybe keep unicode characters in there
-    return text.toLowerCase().split(' ').join(' ').replace(/[^\w ]+/, '')
-}
-
-function distanceSetRatio(s1: string, s2: string): number  {
-    return 100 - fuzzball.token_set_ratio(s1, s2)
-}
-
-function distanceJoinRatio(s1: string, s2: string): number {
-    return 100 - fuzzball.ratio(s1.replace(' ', ''), s2.replace(' ', ''))
-}
-
-function distance(s1: string, s2: string): number {
-    return Math.min(
-        distanceSetRatio(s1, s2),
-        distanceJoinRatio(s1, s2),
-    )
-}
-
-function countNamesWithPrefix(normalizedName: string, normalizedNameList: string[]): number {
-    return normalizedNameList.find(n => n.startsWith(normalizedName)).length
+interface JSONGuest extends Guest {
+    middleName: string,
+    fullFirstName: string,
+    fullName: string,
+    normalized: {
+        firstName: string
+        fullFirstName: string
+        middleName: string
+        lastName: string
+        name: string
+        fullName: string
+    }
 }
 
 
-
-function matchGuestsByNameStartingWith(name: string): { firstName: boolean, lastName: boolean, matches: Guest[] } {
-    const normalized = normalize(name)
-
+function matchGuestsByNameStartingWith(name: string): { firstName: boolean, lastName: boolean, matches: JSONGuest[] } {
     const firstNameMatches = invitees.filter(i => {
         return (
-            normalize(i.firstName).startsWith(normalized) ||
-            normalize(i.fullFirstName).startsWith(normalized)
+            i.normalized.firstName.startsWith(name) ||
+            i.normalized.fullFirstName.startsWith(name)
         )
     })
 
     const lastNameMatches = invitees
-        .filter(i => normalize(i.lastName).split(' ').some(
-            n => n.startsWith(normalized)
+        .filter(i => i.normalized.lastName.split(' ').some(
+            n => n.startsWith(name)
         ))
 
     return {
@@ -80,7 +66,28 @@ function getUniqueMatch(name: string): Guest | undefined {
     }
 }
 
-function getFuzzyMach(name: string): Guest[] {
+function getTwoWordMatch(w1: string, w2: string): JSONGuest[] {
+    // TODO. filter exact matches that have other names starting with that name
+    // eg. we can get an exact match on "Mihai" 
+    return invitees.filter(i => {
+        const firstName = i.normalized.firstName
+        const fullFirstName = i.normalized.fullFirstName
+        const lastName = i.normalized.lastName
+
+        const firstNameMatchesW1 = firstName.startsWith(w1) || fullFirstName.startsWith(w1)
+        const firstNameMatchesW2 = firstName.startsWith(w2) || fullFirstName.startsWith(w2)
+        // TODO: consider doing this with .some() to support multiple last names
+        const lastNameMatchesW1 = lastName.startsWith(w1)
+        const lastNameMatchesW2 = lastName.startsWith(w2)
+
+        return (
+            (firstNameMatchesW1 && lastName.startsWith(w2) || firstNameMatchesW2 && lastName.startsWith(w1)) ||
+            (lastNameMatchesW1 && firstName.startsWith(w2) || lastNameMatchesW2 && firstName.startsWith(w1))
+        )
+    })
+}
+
+function getFuzzyMatch(name: string, scoreThreshold: number) {
     const fuzzyMatches = fuzzball.extract(name, invitees, {
         scorer: FUZZY_SCORER,
         processor: choice => choice.fullName,
@@ -89,7 +96,7 @@ function getFuzzyMach(name: string): Guest[] {
         useCollator: true,
     })
 
-    let goodMatches = fuzzyMatches.filter(m => m.score >= GOOD_SCORE_THRESHOLD)
+    let goodMatches = fuzzyMatches.filter(m => m.score >= scoreThreshold)
 
     if (goodMatches.length > 1) {
         const perfectMatches = goodMatches.filter(m => m.score === PERFECT_SCORE)
@@ -98,27 +105,50 @@ function getFuzzyMach(name: string): Guest[] {
         }
     }
 
-    console.log(goodMatches)
-
-    return goodMatches.map(m => m.choice)
+    return goodMatches
 }
 
-function findGuest(name: string) {
-    // TODO normalize name right away
-    const normalizedish = name.trim().replace(/\s+/, ' ')
-    const words = normalizedish.split(' ')
+function findGuest(name: string): [JSONGuest[], boolean] {
+    const words = name.split(' ')
+    let guestsByName: JSONGuest[] = []
+    let keepTyping = false
 
     if (words.length === 1) {
-        const guestByName = getUniqueMatch(words[0])
-        const scoreByName = FUZZY_SCORER(name, words[0])
+        // guestsByName = [getUniqueMatch(words[0])]
+        const matches = matchGuestsByNameStartingWith(words[0])
+        guestsByName = matches.matches
 
-        if (guestByName && scoreByName >= NAME_MATCH_SCORE_THRESHOLD) {
-            console.log('guest by name')
-            return [guestByName]
-        }
+        keepTyping = !(matches.matches.length === 1 && (
+            (matches.firstName && !matches.lastName) ||
+            (!matches.firstName && matches.lastName)
+        ))
+    // } else if (words.length === 2 && words[0].length > 1 && words[1].length > 1) {
+    } else if (words.length === 2) {
+        guestsByName = getTwoWordMatch(words[0], words[1])
     }
 
-    return getFuzzyMach(name)
+    // filtering undefined values out
+    guestsByName = guestsByName.filter(g => g)
+    guestsByName = guestsByName.filter(g => FUZZY_SCORER(name, g.normalized.fullName) >= NAME_MATCH_SCORE_THRESHOLD)
+
+    if (guestsByName.length === 1) {
+        return [guestsByName, false]
+    } else if (guestsByName.length > 1 && words.length === 1) {
+        return [guestsByName, true]
+    } else if (guestsByName.length > 1 && words.length === 2) {
+        return [guestsByName, !(words[0].length > 2 && words[1].length > 2)]
+    } else {
+        const fuzzyMatches = getFuzzyMatch(name, 55)
+        const goodMatches = fuzzyMatches.filter(m => m.score >= GOOD_SCORE_THRESHOLD)
+    
+        if (goodMatches.length) {
+            return [goodMatches.map(m => m.choice), false]
+        } else if (fuzzyMatches.length) {
+            return [[], true]
+        } else {
+            return [[], false]
+        }
+    }
 }
 
 
@@ -129,7 +159,10 @@ const handler: Handler = (event, context) => {
         return errorResponse('Query must be provided')
     }
 
-    let matches = findGuest(query)
+    const normalizedQuery = normalize(query)
+    const words = query.split(' ')
+
+    let [matches, keepTyping] = findGuest(normalizedQuery)
 
     // TODO handle cases where all matches are equal?
     // this may be better to do on the client-side?
@@ -138,7 +171,9 @@ const handler: Handler = (event, context) => {
             guest: matches[0],
             uniqueMatch: true,
         })
-    } else if (matches.length === 0) {
+    } else if (matches.length > 1 && keepTyping) {
+        matches = []
+    } else if (matches.length === 0 && !keepTyping && words.length > 1) {
         // TODO: revisit this.. maybe we can do a second search 
         // with a looser requirement
         return errorResponse('Guest not found', 404)
