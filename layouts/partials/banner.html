@@ -4,9 +4,10 @@
         {{ with .title }}<h1>{{ . }}</h1>{{ end }}
         {{ with .subtitle }}<p class="major">{{ . | safeHTML }}</p>{{ end }}
         {{ with .content }}<p>{{ . | safeHTML }}</p>{{ end }}
-        {{ with .button }}<ul class="actions stacked">
-            <li><a href="{{ .link }}" class="button primary large wide smooth-scroll-middle"><span style="font-size:1.5rem;">{{ .label }}</span></a></li>
-        </ul>{{ end }}
+        <ul class="actions" style="justify-content:center">
+            <li style="padding-left:0"><a href="https://rsvp.blythe.radu.love" class="button primary large wide smooth-scroll-middle"><span style="font-size:1.5rem;">RSVP</span></a></li>
+            <li><a href="https://www.zola.com/registry/blytheandradu" class="button secondary large wide smooth-scroll-middle"><span style="font-size:1.5rem;">Registry</span></a></li>
+        </ul>
     </div>
     {{ with .image }}<div class="image">
         <img src="{{.}}" alt="Photo from our engagement." />

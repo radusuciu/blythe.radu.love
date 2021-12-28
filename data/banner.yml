@@ -9,6 +9,9 @@ content : |
     <p>San Diego Natural History Museum</p>
   </header>
 image : "images/engagement.jpg"
-button:
+rsvpbutton:
   label : "RSVP"
   link : "https://rsvp.blythe.radu.love"
+registrybutton:
+  label : "Registry"
+  link : "https://www.zola.com/registry/blytheandradu"
