@@ -13,6 +13,7 @@ theme = "hugo-story"
 disableKinds = ["taxonomy", "taxonomyTerm", "section"]
 # googleAnalytics = "your-google-analytics-id"
 
+assetDir = "static/"
 
 ## -----------------------------------------------
 ## Site Parameters

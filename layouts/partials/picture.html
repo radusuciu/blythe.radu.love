@@ -1,0 +1,15 @@
+{{ $img := resources.Get .image }}
+
+<article>
+    <a href="{{ .image }}" class="image" data-size="{{ $img.Width }}x{{ $img.Height }}">
+        {{ $thumb := $img.Resize "x600" }}
+        <img src="{{ $thumb.Permalink }}" alt="{{ .title }}" class="{{ .style }}">
+    </a>
+    <!-- <div class="caption">
+        {{ with .title }}<h3>{{ . }}</h3>{{ end }}
+        {{ with .content }}<p>{{ . }}</p>{{ end }}
+        {{ with .button }}<ul class="actions fixed">
+            <li><span class="button small">{{ . }}</span></li>
+        </ul>{{ end }}
+    </div> -->
+</article>

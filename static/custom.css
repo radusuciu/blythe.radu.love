@@ -1,11 +1,11 @@
 @charset "utf-8";
 
-.gallery.style1 article img {
+.gallery.style2 article img, .gallery.style1 article img {
     height: 300px;
     object-fit: cover;
 }
 
-.gallery.style1 article img.center-top {
+.gallery.style2 article img.center-top, .gallery.style1 article img.center-top  {
     object-position: center top;
 }
 

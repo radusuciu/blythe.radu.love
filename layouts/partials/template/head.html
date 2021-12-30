@@ -23,6 +23,8 @@
 	{{ $noscript := resources.Get "sass/noscript.scss" | resources.ExecuteAsTemplate "noscript.scss" . | toCSS (dict "targetPath" "assets/css/noscript.css" "enableSourceMap" false) }}
 	<noscript><link rel="stylesheet" href="{{ ($noscript | minify).RelPermalink }}" /></noscript>
 	{{end}}
-	<link rel="stylesheet" href="https://unpkg.com/smartphoto@1.1.0/css/smartphoto.min.css">
+
+	<link rel="stylesheet" href="photoswipe/photoswipe.css"> 
+	<link rel="stylesheet" href="photoswipe/default-skin/default-skin.css"> 
 	<link rel="stylesheet" href="custom.css">
 </head>
