@@ -292,10 +292,8 @@ function iOS() {
     || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
   }
 
-$(function(){
-    if (!iOS()) {
-        initPhotoSwipeFromDOM('.ps-gallery');
-    }
-});
+// $(function(){
+//     initPhotoSwipeFromDOM('.ps-gallery');
+// });
 
 })();
