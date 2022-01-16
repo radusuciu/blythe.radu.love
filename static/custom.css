@@ -37,3 +37,17 @@
 .hotel-images article {
     padding: 2px;
 }
+
+.banner.image-fade-in .image img {
+    -moz-transition: opacity .75s ease-in-out!important;
+    -webkit-transition: opacity .75s ease-in-out!important;
+    -ms-transition: opacity .75s ease-in-out!important;
+    transition: opacity .75s ease-in-out!important;
+}
+
+.banner.content-fade-right .content {
+    -moz-transition: opacity .75s ease-in-out,-moz-transform .75s ease-in-out!important;
+    -webkit-transition: opacity .75s ease-in-out,-webkit-transform .75s ease-in-out!important;
+    -ms-transition: opacity .75s ease-in-out,-ms-transform .75s ease-in-out!important;
+    transition: opacity .75s ease-in-out,transform .75s ease-in-out!important;
+}

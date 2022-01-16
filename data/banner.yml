@@ -1,5 +1,5 @@
 ####################### Banner #########################
-style: "style1 orient-left content-align-center image-position-right fullscreen onload-image-fade-in onload-content-fade-right"
+style: "style1 orient-left content-align-center image-position-right fullscreen image-fade-in content-fade-right"
 title : "Blythe & Radu"
 subtitle: |
   We're getting married!
